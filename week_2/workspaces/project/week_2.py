@@ -37,13 +37,13 @@ def get_s3_data(context):
     out={"highest_stock": Out(dagster_type=Aggregation, description="The highest high of stock data")},
     description="Get the stock with the greatest high value"
 )
-def process_data_op(stocks):
+def process_data(stocks):
     highest_stock = max(stocks, key = lambda s: s.high)
     #print(highest_stock)
     return Aggregation(date = highest_stock.date, high = highest_stock.high)
 
 @op(
-    ins={"data": In(dagster_type=Aggregation, description="Aggregated stock data")},
+    ins={"aggregation": In(dagster_type=Aggregation, description="Aggregated stock data")},
     required_resource_keys={"redis"},
     tags={"kind": "redis"},
     description="Upload an Aggregation to Redis"
@@ -57,7 +57,7 @@ def put_redis_data(context, aggregation):
 
 
 @op(
-    ins={"data": In(dagster_type=Aggregation, description="Aggregated stock data")},
+    ins={"aggregation": In(dagster_type=Aggregation, description="Aggregated stock data")},
     required_resource_keys={"s3"},
     tags={"kind": "s3"},
     description="Upload an Aggregation to S3"
@@ -72,7 +72,7 @@ def put_s3_data(context, aggregation):
 
 @graph
 def machine_learning_graph():
-    highest_stock = process_data_op(get_s3_data())
+    highest_stock = process_data(get_s3_data())
     put_redis_data(highest_stock)
     put_redis_data(highest_stock)
 

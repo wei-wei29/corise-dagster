@@ -24,7 +24,7 @@ S3 = {
 
 REDIS = {
     "host": "redis",
-    "port": 6379,
+    "port": "6379",
 }
 
 S3_FILE = "prefix/stock.csv"
