@@ -44,7 +44,6 @@ def process_data_op(stocks):
 
 @op(
     ins={"data": In(dagster_type=Aggregation, description="Aggregated stock data")},
-    config_schema={"redis_key": String},
     required_resource_keys={"redis"},
     tags={"kind": "redis"},
     description="Upload an Aggregation to Redis"
@@ -59,7 +58,6 @@ def put_redis_data(context, aggregation):
 
 @op(
     ins={"data": In(dagster_type=Aggregation, description="Aggregated stock data")},
-    config_schema={"s3_key": String},
     required_resource_keys={"s3"},
     tags={"kind": "s3"},
     description="Upload an Aggregation to S3"
